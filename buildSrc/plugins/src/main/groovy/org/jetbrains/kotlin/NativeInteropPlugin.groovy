@@ -213,7 +213,7 @@ class NamedNativeInteropConfig implements Named {
 
                 linkerOpts += linkFiles.files
 
-                args '-properties', project.findProject(":backend.native").file("konan.properties")
+                args '--config', project.rootProject.file("config")
                 args '-generated', generatedSrcDir
                 args '-natives', nativeLibsDir
                 args '-flavor', this.flavor

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
-class Distribution(val target: KonanTarget,
-    propertyFileOverride: String? = null,
-    runtimeFileOverride: String? = null) {
+class Distribution(
+    configDirOverride: String? = null, 
+    private val runtimeFileOverride: String? = null) {
 
-    val localKonanDir = "${File.userHome}/.konan"
+    // Overriding --config forces disregarding ~/.konan.
+    val localKonanDir: String? = configDirOverride ?. let {
+        "${File.userHome}/.konan"
+    }
 
     private fun findKonanHome(): String {
         val value = System.getProperty("konan.home", "dist")
@@ -35,15 +38,24 @@ class Distribution(val target: KonanTarget,
     }
 
     val konanHome = findKonanHome()
-    val propertyFileName = propertyFileOverride ?: "$konanHome/konan/konan.properties"
-    val properties = File(propertyFileName).loadProperties()
+    val configDir = configDirOverride ?: "$konanHome/konan"
+    val propertyFileName = "$configDir/konan.properties"
+    val properties by lazy { 
+        File(propertyFileName).loadProperties() 
+    }
 
     val klib = "$konanHome/klib"
     val stdlib = "$klib/common/stdlib"
 
-    val targetName = target.visibleName
-    val defaultNatives = "$konanHome/konan/targets/${targetName}/native"
-    val runtime = runtimeFileOverride ?: "$stdlib/targets/${targetName}/native/runtime.bc"
+    val additionalPlatformDefinitions by lazy {
+        val userPlatforms = localKonanDir ?. let { File(it, "config/platforms").listFiles }
+        val localPlatforms = File(configDir, "platforms").listFiles
+        localPlatforms + userPlatforms.orEmpty()
+    }
+
+    fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
+
+    fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlib/targets/${target.visibleName}/native/runtime.bc"
 
     val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
 }

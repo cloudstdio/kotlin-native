@@ -21,24 +21,19 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
-class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: String?,
-                 runnerProvidedKonanHome: String, val flavor: KotlinPlatform) {
+class ToolConfig(userProvidedTargetName: String?, userProvidedConfigDir: String?, val flavor: KotlinPlatform) {
 
+    private val distribution = Distribution(userProvidedConfigDir)
     private val targetManager = TargetManager(userProvidedTargetName)
     private val host = TargetManager.host
     private val target = targetManager.target
 
-    private val konanHome = File(runnerProvidedKonanHome).absolutePath
-    private val konanPropertiesFile = userProvidedKonanProperties?.File() ?: File(konanHome, "konan/konan.properties")
-    private val properties = konanPropertiesFile.loadProperties()
-
-    private val dependencies = DependencyProcessor.defaultDependenciesRoot
-
-    private val platform = PlatformManager(properties, dependencies.path).platform(target)
+    private val platform = PlatformManager(distribution.properties, distribution.dependenciesDir).platform(target)
 
     val substitutions = mapOf<String, String>(
             "target" to target.detailedName,

@@ -39,6 +39,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val currentAbiVersion: Int = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
+    internal val distribution = Distribution(
+        configuration.get(KonanConfigKeys.CONFIG_DIR),
+        configuration.get(KonanConfigKeys.RUNTIME_FILE))
+
     internal val targetManager = TargetManager(
         configuration.get(KonanConfigKeys.TARGET))
 
@@ -51,10 +55,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val indirectBranchesAreAllowed = target != KonanTarget.WASM32
-
-    internal val distribution = Distribution(target, 
-        configuration.get(KonanConfigKeys.PROPERTY_FILE),
-        configuration.get(KonanConfigKeys.RUNTIME_FILE))
 
     internal val platform = PlatformManager(distribution.properties, distribution.dependenciesDir).platform(target).apply {
         if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
@@ -84,7 +84,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolver = defaultResolver(repositories, distribution)
+    private val resolver = defaultResolver(repositories, target, distribution)
 
     internal val immediateLibraries: List<LibraryReaderImpl> by lazy {
         val result = resolver.resolveImmediateLibraries(
@@ -109,7 +109,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val defaultNativeLibraries = 
         if (produce == CompilerOutputKind.PROGRAM) 
-            File(distribution.defaultNatives).listFiles.map { it.absolutePath } 
+            File(distribution.defaultNatives(target)).listFiles.map { it.absolutePath } 
         else emptyList()
 
     internal val nativeLibraries: List<String> = 

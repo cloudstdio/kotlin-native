@@ -23,7 +23,8 @@ defaultTasks 'clean', 'dist'
 convention.plugins.platformInfo = new PlatformInfo()
 
 ext {
-    konanPropertiesFile = project(':backend.native').file('konan.properties')
+    localConfigDir = project.file('config')
+    konanPropertiesFile = new File(localConfigDir, 'konan.properties')
     konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
 
     String DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
@@ -68,6 +69,7 @@ allprojects {
 void setupHostAndTarget() {
     ext.hostName = TargetManager.hostName
     ext.targetList = TargetManager.enabled.collect { it.visibleName } as List
+    ext.konanTargetList = TargetManager.enabled as List
 }
 
 void setupClang(Project project) {
