@@ -91,10 +91,10 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-fno-pie",
                         "-fno-pic",
                         "-nostdinc",
-                        "-isystem$sysRoot/include/libcxx",
-                        "-isystem$sysRoot/lib/libcxxabi/include",
-                        "-isystem$sysRoot/include/compat",
-                        "-isystem$sysRoot/include/libc") +
+                        "-isystem$absoluteTargetSysRoot/include/libcxx",
+                        "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
+                        "-isystem$absoluteTargetSysRoot/include/compat",
+                        "-isystem$absoluteTargetSysRoot/include/libc") +
                     (configurables as ZephyrConfigurables).boardSpecificClangFlags
 
             }
@@ -136,7 +136,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.WASM32 ->
                 listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
                         "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
-            KonanTarget.ZEPHYR ->
+            is KonanTarget.ZEPHYR ->
                 listOf( "-D__ZEPHYR__=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
                         "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
         }
@@ -169,7 +169,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             home.parentFile.absolutePath
     }
 
-    val hostCompilerArgsForJni = listOf("", HostManager.jniHostPlatformIncludeDir).map { "-I$jdkHome/include/$it" }.toTypedArray()
+    val hostCompilerArgsForJni = listOf("", HostManager.jniHostPlatformIncludeDir).map { "-I$jdkDir/include/$it" }.toTypedArray()
 
     val clangArgs = (commonClangArgs + specificClangArgs).toTypedArray()
 

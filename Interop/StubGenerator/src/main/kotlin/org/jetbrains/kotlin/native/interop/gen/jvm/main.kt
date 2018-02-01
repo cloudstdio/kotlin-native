@@ -249,7 +249,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
 
     val tool = ToolConfig(
         arguments.target,
-        arguments.configDir
+        arguments.configDir,
         flavor
     )
     tool.downloadDependencies()
