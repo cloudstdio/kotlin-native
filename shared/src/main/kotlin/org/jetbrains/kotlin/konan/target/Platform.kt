@@ -29,9 +29,9 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(properties: Properties, baseDir: String) {
-    private val host = TargetManager.host
-    private val platforms = TargetManager.enabled.map {
+class PlatformManager(hostManager: HostManager, properties: Properties, baseDir: String) {
+    private val host = HostManager.host
+    private val platforms = hostManager.enabled.map {
         it to Platform(loadConfigurables(it, properties, baseDir))
     }.toMap()
 

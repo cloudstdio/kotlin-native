@@ -139,7 +139,6 @@ task update_kotlin_compiler(type: DefaultTask) {
 }
 
 abstract class NativeDep extends DefaultTask {
-    protected final String hostSystem = TargetManager.longerSystemName();
     static final String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
 
     @Input
@@ -237,9 +236,8 @@ enum DependencyKind {
     String toString() { return name }
 }
 
-TargetManager.enabled.each { target ->
-    def konanProperties = ConfigurablesImplKt.loadConfigurables(
-            target,
+rootProject.ext.hostManager.enabled.each { target ->
+    def konanProperties = ConfigurablesImplKt.loadConfigurables(target,
             rootProject.ext.konanProperties,
             rootProject.ext.dependenciesDir.canonicalPath
     )

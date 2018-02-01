@@ -147,7 +147,6 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        def target = new TargetManager(target).target.visibleName
         return new File(project.buildDir, "nativelibs/$target")
     }
 
@@ -158,8 +157,11 @@ class NamedNativeInteropConfig implements Named {
     NamedNativeInteropConfig(Project project, String name, String target = null, String flavor = 'jvm') {
         this.name = name
         this.project = project
-        this.target = target
         this.flavor = flavor
+
+        def hostManager = project.rootProject.ext.hostManager
+        def targetManager = hostManager.targetManager(target)
+        this.target = targetManager.targetName
 
         this.headers = []
         this.linkFiles = project.files()

@@ -24,8 +24,11 @@ convention.plugins.platformInfo = new PlatformInfo()
 
 ext {
     localConfigDir = project.file('config')
-    konanPropertiesFile = new File(localConfigDir, 'konan.properties')
-    konanProperties = PropertiesKt.loadProperties(konanPropertiesFile.absolutePath)
+    distribution = new Distribution(localConfigDir.canonicalPath, null)
+    hostManager = new HostManager(distribution)
+
+    konanProperties = distribution.properties
+    konanPropertiesFile = project.file(distribution.propertyFileName)
 
     String DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
     def dependencyProfiles = konanProperties.getProperty(DEPENDENCY_PROFILES_KEY)
@@ -41,7 +44,7 @@ ext {
 
     distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
-    platformManager = new PlatformManager(konanProperties, dependenciesDir.absolutePath)
+    platformManager = new PlatformManager(hostManager, konanProperties, dependenciesDir.absolutePath)
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinCompilerVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinReflectVersion}"
@@ -67,9 +70,9 @@ allprojects {
 }
 
 void setupHostAndTarget() {
-    ext.hostName = TargetManager.hostName
-    ext.targetList = TargetManager.enabled.collect { it.visibleName } as List
-    ext.konanTargetList = TargetManager.enabled as List
+    ext.hostName = hostManager.hostName
+    ext.targetList = hostManager.enabled.collect { it.visibleName } as List
+    ext.konanTargetList = hostManager.enabled as List
 }
 
 void setupClang(Project project) {
@@ -137,15 +140,15 @@ void loadCommandLineProperties() {
 
 class PlatformInfo {
     boolean isMac() {
-        return TargetManager.hostIsMac
+        return HostManager.hostIsMac
     }
 
     boolean isWindows() {
-        return TargetManager.hostIsMingw
+        return HostManager.hostIsMingw
     }
 
     boolean isLinux() {
-        return TargetManager.hostIsLinux
+        return HostManager.hostIsLinux
     }
 
     Throwable unsupportedPlatformException() {
@@ -347,7 +350,7 @@ dependencies {
 task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
-    def simpleOsName = TargetManager.simpleOsName()
+    def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
     from("$project.rootDir/dist") {
         include '**'

@@ -141,7 +141,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1")
         }
 
-    private val host = TargetManager.host
+    private val host = HostManager.host
 
     private val binDir = when (host) {
         KonanTarget.LINUX -> "$absoluteTargetToolchain/bin"
@@ -169,7 +169,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             home.parentFile.absolutePath
     }
 
-    val hostCompilerArgsForJni = listOf("", TargetManager.jniHostPlatformIncludeDir).map { "-I$jdkDir/include/$it" }.toTypedArray()
+    val hostCompilerArgsForJni = listOf("", HostManager.jniHostPlatformIncludeDir).map { "-I$jdkHome/include/$it" }.toTypedArray()
 
     val clangArgs = (commonClangArgs + specificClangArgs).toTypedArray()
 

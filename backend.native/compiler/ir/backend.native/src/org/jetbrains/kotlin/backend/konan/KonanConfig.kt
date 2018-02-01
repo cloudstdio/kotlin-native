@@ -43,20 +43,20 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(KonanConfigKeys.CONFIG_DIR),
         configuration.get(KonanConfigKeys.RUNTIME_FILE))
 
-    internal val targetManager = TargetManager(
-        configuration.get(KonanConfigKeys.TARGET))
+    internal val hostManager = HostManager(distribution)
+    internal val targetManager = hostManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
 
     private val target = targetManager.target
 
     init {
-        if (!target.enabled) {
-            error("Target $target is not available on the ${TargetManager.host} host")
+        if (!hostManager.isEnabled(target)) {
+            error("Target $target is not available on the ${HostManager.host} host")
         }
     }
 
     val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
-    internal val platform = PlatformManager(distribution.properties, distribution.dependenciesDir).platform(target).apply {
+    internal val platform = PlatformManager(hostManager, distribution.properties, distribution.dependenciesDir).platform(target).apply {
         if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
             downloadDependencies()
         }

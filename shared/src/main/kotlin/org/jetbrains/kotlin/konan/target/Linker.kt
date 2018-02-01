@@ -33,7 +33,7 @@ abstract class LinkerFlags(val configurables: Configurables)
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
     protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
-    private val libLTODir = when (TargetManager.host) {
+    private val libLTODir = when (HostManager.host) {
         KonanTarget.MACBOOK, KonanTarget.LINUX -> llvmLib
         KonanTarget.MINGW -> llvmBin
         else -> error("Don't know libLTO location for this platform.")

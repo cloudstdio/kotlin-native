@@ -28,8 +28,7 @@ import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.enabled
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
@@ -47,12 +46,14 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     internal val aggregateBuildTask: Task
 
+    private val hostManager = HostManager()
+
     private val konanTargets: Iterable<KonanTarget>
-        get() = targets.map { TargetManager.targetByName(it) }.distinct()
+        get() = targets.map { hostManager.targetByName(it) }.distinct()
 
     init {
         for (target in konanTargets) {
-            if (!target.enabled) {
+            if (!hostManager.isEnabled(target)) {
                 project.logger.warn("The target is not enabled on the current host: ${target.visibleName}")
                 continue
             }
@@ -110,7 +111,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             }
 
     protected fun createHostTaskIfDeclared(): Task? =
-            this[TargetManager.host]?.let { hostBuild ->
+            this[HostManager.host]?.let { hostBuild ->
                 project.tasks.create(generateHostTaskName()) {
                     it.group = BasePlugin.BUILD_GROUP
                     it.description = generateHostTaskDescription(it, hostBuild.konanTarget)
@@ -121,7 +122,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     internal operator fun get(target: KonanTarget) = targetToTask[target]
 
     fun getByTarget(target: String) = findByTarget(target) ?: throw NoSuchElementException("No such target for artifact $name: ${target}")
-    fun findByTarget(target: String) = this[TargetManager.targetByName(target)]
+    fun findByTarget(target: String) = this[hostManager.targetByName(target)]
 
     fun getArtifactByTarget(target: String) = getByTarget(target).artifact
     fun findArtifactByTarget(target: String) = findByTarget(target)?.artifact
@@ -146,9 +147,9 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     fun dependsOn(vararg dependencies: Any?) = forEach { it.dependsOn(*dependencies) }
 
     fun target(targetString: String, configureAction: T.() -> Unit) {
-        val target = TargetManager.targetByName(targetString)
+        val target = hostManager.targetByName(targetString)
 
-        if (!target.enabled) {
+        if (!hostManager.isEnabled(target)) {
             project.logger.warn("Target '$targetString' of artifact '$name' is not supported on the current host")
             return
         }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.konan.library.impl.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -64,7 +64,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
     val cstubsName ="cstubs"
     val manifest = File(buildDir, "manifest.properties")
 
-    val targetManager = TargetManager(target)
+    val targetManager = HostManager().targetManager(target)
     val resolver = defaultResolver(repos, targetManager.target)
     val allLibraries = resolver.resolveLibrariesRecursive(
             libraries, targetManager.target, noStdLib = true, noDefaultLibs = noDefaultLibs

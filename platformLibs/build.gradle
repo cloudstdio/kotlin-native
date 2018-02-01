@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.KlibInstall
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.DefFile
@@ -46,7 +46,9 @@ private String defFileToLibName(String target, String name) {
 }
 //#endregion
 
-TargetManager.enabled.each { target ->
+def distribution = new Distribution()
+def hostManager = new HostManager(distribution)
+hostManager.enabled.each { target ->
 
     def targetName = target.visibleName
 
@@ -89,7 +91,7 @@ TargetManager.enabled.each { target ->
 // TODO: Don't install libraries here - copy them in the distPlatformLibs task
 task hostInstall {
     dependsOn tasks.withType(KlibInstall.class).findAll {
-        it.target == TargetManager.hostName
+        it.target == HostManager.hostName
     }
 }
 

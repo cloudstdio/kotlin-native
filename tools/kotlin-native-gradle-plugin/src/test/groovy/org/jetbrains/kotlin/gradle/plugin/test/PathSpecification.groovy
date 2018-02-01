@@ -13,7 +13,7 @@ class PathSpecification extends BaseKonanSpecification {
         expect:
         def project = KonanProject.createEmpty(
                 projectDirectory,
-                new TargetManager.enabed.collect { t -> t.visibleName }
+                new TargetManager.enabled.collect { t -> t.visibleName }
         ) { KonanProject it ->
             it.generateSrcFile("main.kt")
             it.generateDefFile("interop.def", "")

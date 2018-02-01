@@ -36,8 +36,10 @@ class ExecClang {
         return project.rootProject.platform(target).clang.clangArgsForKonanSources
     }
 
-    private List<String> konanArgs(String target) {
-        return konanArgs(new TargetManager(target).target)
+    private List<String> konanArgs(String targetName) {
+        def hostManager = project.rootProject.hostManager
+        def target = hostManager.targetManager(targetName).target
+        return konanArgs(target)
     }
 
     // The bare ones invoke clang with system default sysroot.
