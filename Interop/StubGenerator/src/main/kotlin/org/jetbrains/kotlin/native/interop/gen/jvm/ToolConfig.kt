@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 class ToolConfig(userProvidedTargetName: String?, userProvidedConfigDir: String?, val flavor: KotlinPlatform) {
 
     private val distribution = Distribution(userProvidedConfigDir)
-    private val hostManager = HostManager(distribution)
-    private val targetManager = hostManager.targetManager(userProvidedTargetName)
+    private val platformManager = PlatformManager(distribution)
+    private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host
     private val target = targetManager.target
 
-    private val platform = PlatformManager(hostManager, distribution.properties, distribution.dependenciesDir).platform(target)
+    private val platform = platformManager.platform(target)
 
     val substitutions = mapOf<String, String>(
             "target" to target.detailedName,

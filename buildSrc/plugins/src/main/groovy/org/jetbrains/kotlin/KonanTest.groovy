@@ -28,7 +28,7 @@ import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
     public String source
-    def targetManager = project.rootProject.hostManager.targetManager(project.testTarget)
+    def targetManager = project.rootProject.platformManager.targetManager(project.testTarget)
     def target = targetManager.target
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")

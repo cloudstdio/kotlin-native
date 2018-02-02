@@ -32,13 +32,14 @@ class ExecClang {
         this.project = project
     }
 
+    private def platfromManager = project.rootProject.platformManager
+
     private List<String> konanArgs(KonanTarget target) {
-        return project.rootProject.platform(target).clang.clangArgsForKonanSources
+        return platformManager.platform(target).clang.clangArgsForKonanSources
     }
 
     private List<String> konanArgs(String targetName) {
-        def hostManager = project.rootProject.hostManager
-        def target = hostManager.targetManager(targetName).target
+        def target = platformManager.targetManager(targetName).target
         return konanArgs(target)
     }
 

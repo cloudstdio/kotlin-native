@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class Distribution(
-    configDirOverride: String? = null, 
+    private val onlyDefaultProfiles: Boolean = false,
+    private val configDirOverride: String? = null, 
     private val runtimeFileOverride: String? = null) {
 
     // Overriding --config forces disregarding ~/.konan.
@@ -41,7 +42,11 @@ class Distribution(
     val configDir = configDirOverride ?: "$konanHome/konan"
     val propertyFileName = "$configDir/konan.properties"
     val properties by lazy { 
-        File(propertyFileName).loadProperties() 
+        val loaded = File(propertyFileName).loadProperties() 
+        if (onlyDefaultProfiles) {
+            loaded.keepOnlyDefaultProfiles()
+        }
+        loaded
     }
 
     val klib = "$konanHome/klib"
@@ -59,3 +64,22 @@ class Distribution(
 
     val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
 }
+
+fun Properties.keepOnlyDefaultProfiles() {
+    val DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
+    val dependencyProfiles = this.getProperty(DEPENDENCY_PROFILES_KEY)
+    if (dependencyProfiles != "default alt")
+        error("unexpected $DEPENDENCY_PROFILES_KEY value: expected 'default alt', got '$dependencyProfiles'")
+
+    // Force build to use only 'default' profile:
+    this.setProperty(DEPENDENCY_PROFILES_KEY, "default")
+    // Force build to use fixed Xcode version:
+    this.setProperty("useFixedXcodeVersion", "9.2")
+    // TODO: it actually affects only resolution made in :dependencies,
+    // that's why we assume that 'default' profile comes first (and check this above).
+}
+
+fun buildDistribution(localConfigDir: String?) 
+    = Distribution( true, localConfigDir!!, null)
+
+fun customerDistribution() = Distribution()

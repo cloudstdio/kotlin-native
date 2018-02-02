@@ -40,29 +40,28 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val currentAbiVersion: Int = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
     internal val distribution = Distribution(
+        false,
         configuration.get(KonanConfigKeys.CONFIG_DIR),
         configuration.get(KonanConfigKeys.RUNTIME_FILE))
 
-    internal val hostManager = HostManager(distribution)
-    internal val targetManager = hostManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
-
+    internal val platformManager = PlatformManager(distribution)
+    internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     private val target = targetManager.target
 
     init {
-        if (!hostManager.isEnabled(target)) {
+        if (!platformManager.isEnabled(target)) {
             error("Target $target is not available on the ${HostManager.host} host")
         }
     }
 
-    val indirectBranchesAreAllowed = target != KonanTarget.WASM32
-
-    internal val platform = PlatformManager(hostManager, distribution.properties, distribution.dependenciesDir).platform(target).apply {
+    val platform = platformManager.platform(target).apply {
         if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
             downloadDependencies()
         }
     }
 
     internal val clang = platform.clang
+    val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val prefix = produce.prefix(target)

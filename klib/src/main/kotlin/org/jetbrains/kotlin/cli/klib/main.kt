@@ -169,8 +169,8 @@ fun libraryInRepoOrCurrentDir(repository: File, name: String): File {
 fun main(args: Array<String>) {
     val command = Command(args)
 
-    val hostManager = HostManager()
-    val targetManager = hostManager.targetManager(command.options["-target"]?.last())
+    val platformManager = platformManager()
+    val targetManager = platfromManager.targetManager(command.options["-target"]?.last())
     val target = targetManager.targetName
 
     val repository = command.options["-repository"]?.last()

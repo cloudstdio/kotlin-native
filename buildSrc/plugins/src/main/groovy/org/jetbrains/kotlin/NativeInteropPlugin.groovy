@@ -159,8 +159,8 @@ class NamedNativeInteropConfig implements Named {
         this.project = project
         this.flavor = flavor
 
-        def hostManager = project.rootProject.ext.hostManager
-        def targetManager = hostManager.targetManager(target)
+        def platformManager = project.rootProject.ext.platformManager
+        def targetManager = platformManager.targetManager(target)
         this.target = targetManager.targetName
 
         this.headers = []

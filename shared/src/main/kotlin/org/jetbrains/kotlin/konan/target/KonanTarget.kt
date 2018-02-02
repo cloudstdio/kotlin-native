@@ -115,7 +115,7 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
     override val targetSuffix get() = target.detailedName
 }
 
-open class HostManager(distribution: Distribution = Distribution()) {
+open class HostManager(protected val distribution: Distribution = Distribution()) {
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
@@ -128,6 +128,13 @@ open class HostManager(distribution: Distribution = Distribution()) {
     }
 
     val targets = targetValues.associate{ it.visibleName to it }
+
+    fun toKonanTargets(names: List<String>): List<KonanTarget> {
+        return names.map {
+            if (it == "host") HostManager.host
+            else targets[known(it)]!!
+        }
+    }
 
     fun known(name: String): String {
         if (targets[name] == null) {

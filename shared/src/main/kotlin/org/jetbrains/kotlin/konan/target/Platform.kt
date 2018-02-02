@@ -29,13 +29,20 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(hostManager: HostManager, properties: Properties, baseDir: String) {
-    private val host = HostManager.host
-    private val platforms = hostManager.enabled.map {
-        it to Platform(loadConfigurables(it, properties, baseDir))
+class PlatformManager(distribution: Distribution) : HostManager(distribution) {
+
+    private val loaders = enabled.map {
+        it to loadConfigurables(it, distribution.properties, distribution.konanHome)
+    }.toMap()
+
+    //private val host = HostManager.host
+    private val platforms = loaders.map {
+        it.key to Platform(it.value)
     }.toMap()
 
     fun platform(target: KonanTarget) = platforms[target]!!
     val hostPlatform = platforms[host]!!
+
+    fun loader(target: KonanTarget) = loaders[target]!!
 }
 
