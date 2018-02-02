@@ -28,15 +28,13 @@ import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
     public String source
-    def targetManager = project.rootProject.platformManager.targetManager(project.testTarget)
+    def platformManager = project.rootProject.platformManager
+    def targetManager = platformManager.targetManager(project.testTarget)
     def target = targetManager.target
-    def backendNative = project.project(":backend.native")
-    def runtimeProject = project.project(":runtime")
     def dist = project.rootProject.file(project.findProperty("konan.home") ?: "dist")
     def dependenciesDir = project.rootProject.dependenciesDir
     def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
-    def mainC = 'main.c'
     def outputSourceSetName = "testOutputLocal"
     def enableKonanAssertions = true
     String outputDirectory = null
@@ -280,9 +278,7 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     }
 
     List<String> executionCommandLine(String exe) {
-        def properties = project.rootProject.konanProperties
-        def targetToolchain = TargetPropertiesKt.hostTargetString(properties, "targetToolchain", target)
-        def absoluteTargetToolchain = "$dependenciesDir/$targetToolchain"
+        def absoluteTargetToolchain = platformManager.platform(target)
         if (target == KonanTarget.WASM32) {
             def d8 = "$absoluteTargetToolchain/bin/d8"
             def launcherJs = "${exe}.js"
