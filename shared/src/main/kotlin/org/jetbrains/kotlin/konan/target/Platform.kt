@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class Platform(val configurables: Configurables) 
     : Configurables by configurables {
@@ -32,7 +32,7 @@ class Platform(val configurables: Configurables)
 class PlatformManager(distribution: Distribution) : HostManager(distribution) {
 
     private val loaders = enabled.map {
-        it to loadConfigurables(it, distribution.properties, distribution.konanHome)
+        it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)
     }.toMap()
 
     //private val host = HostManager.host

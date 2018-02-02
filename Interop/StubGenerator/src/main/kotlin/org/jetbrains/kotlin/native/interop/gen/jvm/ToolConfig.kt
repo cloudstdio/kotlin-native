@@ -16,16 +16,13 @@
 
 package  org.jetbrains.kotlin.native.interop.tool
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
 class ToolConfig(userProvidedTargetName: String?, userProvidedConfigDir: String?, val flavor: KotlinPlatform) {
 
-    private val distribution = Distribution(userProvidedConfigDir)
+    private val distribution = buildDistribution(userProvidedConfigDir)
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host
