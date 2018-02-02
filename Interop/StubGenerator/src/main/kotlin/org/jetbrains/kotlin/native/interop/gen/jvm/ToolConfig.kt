@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
 class ToolConfig(userProvidedTargetName: String?, userProvidedConfigDir: String?, val flavor: KotlinPlatform) {
 
-    private val distribution = buildDistribution(userProvidedConfigDir)
+    private val distribution = userProvidedConfigDir ?. let { buildDistribution(it) } ?: customerDistribution()
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host

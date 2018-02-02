@@ -79,7 +79,7 @@ fun Properties.keepOnlyDefaultProfiles() {
     // that's why we assume that 'default' profile comes first (and check this above).
 }
 
-fun buildDistribution(localConfigDir: String?) 
-    = Distribution( true, localConfigDir!!, null)
+fun buildDistribution(localConfigDir: String)
+    = Distribution( true, localConfigDir, null)
 
 fun customerDistribution() = Distribution()
