@@ -129,7 +129,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
 
     val targets = targetValues.associate{ it.visibleName to it }
 
-    fun toKonanTargets(names: List<String>): List<KonanTarget> {
+    fun toKonanTargets(names: Iterable<String>): List<KonanTarget> {
         return names.map {
             if (it == "host") HostManager.host
             else targets[known(it)]!!

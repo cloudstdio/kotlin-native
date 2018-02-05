@@ -46,9 +46,7 @@ private String defFileToLibName(String target, String name) {
 }
 //#endregion
 
-def distribution = new Distribution()
-def hostManager = new HostManager(distribution)
-hostManager.enabled.each { target ->
+project.rootProject.ext.platformManager.enabled.each { target ->
 
     def targetName = target.visibleName
 

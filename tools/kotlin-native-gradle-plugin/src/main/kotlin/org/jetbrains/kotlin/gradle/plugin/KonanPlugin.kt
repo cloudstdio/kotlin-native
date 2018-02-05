@@ -23,7 +23,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
@@ -74,8 +74,23 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
     get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
             as NamedDomainObjectContainer<KonanBuildingConfig<*>>
 
+internal val Project.platformManager: PlatformManager
+    get() {
+        val configDir = findProperty("konan.config") as java.io.File?
+
+        return if(configDir != null)
+            PlatformManager(Distribution(false, configDir.absolutePath))
+        else
+            PlatformManager(customerDistribution())
+    }
+
 internal val Project.konanTargets: List<KonanTarget>
-    get() = konanExtension.konanTargets
+    get() {
+        return platformManager.toKonanTargets(konanExtension.targets)
+                .filter{ platformManager.isEnabled(it) }
+                .distinct()
+
+    }
 
 @Suppress("UNCHECKED_CAST")
 internal val Project.konanExtension: KonanExtension
@@ -227,16 +242,7 @@ open class KonanExtension {
     var targets = mutableListOf("host")
     var languageVersion: String? = null
     var apiVersion: String? = null
-
-    val hostManager = HostManager()
-
     val jvmArgs = mutableListOf<String>()
-
-    internal val konanTargets: List<KonanTarget>
-        get() = targets
-                .map { hostManager.targets[it]!! }
-                .filter { hostManager.isEnabled(it) }
-                .distinct()
 }
 
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
@@ -247,7 +253,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         KONAN_VERSION       ("konan.version"),
         KONAN_BUILD_TARGETS ("konan.build.targets"),
         KONAN_JVM_ARGS      ("konan.jvmArgs"),
-        DOWNLOAD_COMPILER   ("download.compiler")
+        DOWNLOAD_COMPILER   ("download.compiler"),
     }
 
     companion object {
@@ -262,8 +268,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             load(KonanPlugin::class.java.getResourceAsStream("/META-INF/gradle-plugins/konan.properties") ?:
                 throw RuntimeException("Cannot find a properties file"))
         }.getProperty("default-konan-version") ?: throw RuntimeException("Cannot read the default compiler version")
-
-        internal val hostManager = HostManager()
     }
 
     private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {

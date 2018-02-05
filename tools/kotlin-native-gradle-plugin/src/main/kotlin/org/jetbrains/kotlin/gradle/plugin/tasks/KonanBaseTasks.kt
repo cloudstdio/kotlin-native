@@ -28,6 +28,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KonanArtifactSpec
 import org.jetbrains.kotlin.gradle.plugin.KonanArtifactWithLibrariesSpec
 import org.jetbrains.kotlin.gradle.plugin.KonanLibrariesSpec
+import org.jetbrains.kotlin.gradle.plugin.konanTargets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -50,7 +51,7 @@ abstract class KonanTargetableTask: DefaultTask() {
     }
 
     val targetIsSupported: Boolean
-        @Internal get() = KonanPlugin.hostManager.isEnabled(konanTarget)
+        @Internal get() = project.konanTargets.contains(konanTarget)
 
     val isCrossCompile: Boolean
         @Internal get() = (konanTarget != HostManager.host)
