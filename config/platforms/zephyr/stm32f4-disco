@@ -27,23 +27,24 @@ llvmLtoDynamicFlags.zephyr_stm32f4-disco = -relocation-model=pic
 
 boardSpecificClangFlags.zephyr_stm32f4_disco = -mabi=aapcs -mthumb -mcpu=cortex-m4
 
-targetToolchain.linux-zephyr_stm32f4-disco = target-gcc-toolchain-6-2017q2-linux-armemb/arm-none-eabi
+targetToolchain.linux-zephyr_stm32f4-disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
 dependencies.linux-zephyr_stm32f4-disco = \
     clang-llvm-5.0.0-linux-x86-64 \
-    target-gcc-toolchain-6-2017q2-linux-armemb \
+    gcc-arm-none-eabi-7-2017-q4-major-linux \
     # TODO: get rid of wasm here
     target-sysroot-2-wasm \
     # zephyr-host-tools-1-linux \
     # zephyr-zephyr-v1.10.0
 
 
-gcc-arm-none-eabi.default = /opt/local//Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
-gcc-arm-none-eabi.alt = /opt/local//Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
+#gcc-arm-none-eabi.default = /opt/local//Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
+#gcc-arm-none-eabi.alt = /opt/local//Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
 
-targetToolchain.osx-zephyr_stm32f4-disco = gcc-arm-none-eabi
+targetToolchain.osx-zephyr_stm32f4-disco = gcc-arm-none-eabi-7-2017-q4-major-mac/gcc-arm-none-eabi
 dependencies.osx-zephyr_stm32f4-disco = \
-    gcc-arm-none-eabi \
+    gcc-arm-none-eabi-7-2017-q4-major-mac \
     clang-llvm-5.0.0-darwin-macos \
+    # TODO: get rid of wasm here
     target-sysroot-2-wasm
     # zephyr-host-tools-1-linux \
     # zephyr-zephyr-v1.10.0
