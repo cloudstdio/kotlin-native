@@ -84,7 +84,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
                 is KonanTarget.ZEPHYR ->
                     listOf("-target", targetArg!!, "-mabi=aapcs", "-mthumb", "-mcpu=cortex-m3",
-                        "-Os", "-g",
                         "-fno-rtti",
                         "-fno-exceptions",
                         "-fno-asynchronous-unwind-tables",

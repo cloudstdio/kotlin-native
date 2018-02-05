@@ -76,12 +76,7 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
 
 internal val Project.platformManager: PlatformManager
     get() {
-        val configDir = findProperty("konan.config") as java.io.File?
-
-        return if(configDir != null)
-            PlatformManager(Distribution(false, configDir.absolutePath))
-        else
-            PlatformManager(customerDistribution())
+        return findProperty("platformManager") as PlatformManager ?: PlatformManager(customerDistribution())
     }
 
 internal val Project.konanTargets: List<KonanTarget>

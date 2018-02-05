@@ -139,7 +139,7 @@ task update_kotlin_compiler(type: DefaultTask) {
 }
 
 abstract class NativeDep extends DefaultTask {
-    static final String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
+    static final String baseUrl = "https://download.jetbrains.com/kotlin/native"
 
     @Input
     abstract String getFileName()
