@@ -40,9 +40,20 @@ class Distribution(
 
     val konanHome = findKonanHome()
     val configDir = configDirOverride ?: "$konanHome/konan"
-    val propertyFileName = "$configDir/konan.properties"
+    val mainPropertyFileName = "$configDir/konan.properties"
+
+    fun additionalPropertyFiles(genericName: String): List<File> =
+            File(this.configDir, "platforms/$genericName").listFiles
+
+
     val properties by lazy { 
-        val loaded = File(propertyFileName).loadProperties() 
+        val loaded = File(mainPropertyFileName).loadProperties()
+        HostManager.knownTargetTemplates.forEach {
+            additionalPropertyFiles(it).forEach {
+                val additional = it.loadProperties ()
+                loaded.putAll(additional)
+            }
+        }
         if (onlyDefaultProfiles) {
             loaded.keepOnlyDefaultProfiles()
         }
@@ -63,6 +74,9 @@ class Distribution(
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlib/targets/${target.visibleName}/native/runtime.bc"
 
     val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
+
+    fun availableSubTarget(genericName: String) =
+        additionalPropertyFiles(genericName).map { it.name }
 }
 
 fun Properties.keepOnlyDefaultProfiles() {

@@ -54,8 +54,6 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
 
     // Tunable targets
     class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32, "${genericName}_$subName")
-
-
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
@@ -122,7 +120,9 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     // TODO: need a better way to enumerated predefined targets.
     private val predefinedTargets = listOf(ANDROID_ARM32, ANDROID_ARM64, IPHONE, IPHONE_SIM, LINUX, MINGW, MACBOOK, RASPBERRYPI, LINUX_MIPS32, LINUX_MIPSEL32, WASM32)
 
-    private val zephyrSubtargets = distribution.availableZephyrBoards.map { ZEPHYR(it) }
+    // TODO: We hardcode the fact that the only configurable target is zephyr for now.
+    private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
+
     val targetValues: List<KonanTarget> by lazy {
         predefinedTargets + zephyrSubtargets
     }
@@ -236,13 +236,11 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         val hostSuffix get() = host.detailedName
         @JvmStatic
         val hostName get() = host.visibleName
+
+        val knownTargetTemplates = listOf("zephyr")
+
     }
 }
 
 class TargetSupportException (message: String = "", cause: Throwable? = null) : Exception(message, cause)
-
-
-// TODO: get the list of available borads from the konan.properties
-
-val Distribution.availableZephyrBoards get() = listOf("stm32f4-disco")
 
