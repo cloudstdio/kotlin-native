@@ -45,7 +45,9 @@ class Distribution(
     fun additionalPropertyFiles(genericName: String): List<File> =
             File(this.configDir, "platforms/$genericName").listFiles
 
-
+    fun userPropertyFiles(genericName: String): List<File> =
+            File(localKonanDir, "platforms/$genericName").listFiles
+    
     val properties by lazy { 
         val loaded = File(mainPropertyFileName).loadProperties()
         HostManager.knownTargetTemplates.forEach {
