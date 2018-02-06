@@ -94,6 +94,7 @@ fun Properties.keepOnlyDefaultProfiles() {
 }
 
 fun buildDistribution(localConfigDir: String)
-    = Distribution( true, localConfigDir, null)
+    = Distribution(true, localConfigDir, null)
 
-fun customerDistribution() = Distribution()
+fun customerDistribution(konanHome: String? = null) 
+    = konanHome ?. let { Distribution(false, "$it/konan", null)} ?: Distribution()
