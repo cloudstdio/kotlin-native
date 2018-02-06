@@ -362,7 +362,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val staticData = StaticData(context)
 
-    private val target = context.config.targetManager.target
+    private val target = context.config.target
 
     val runtimeFile = context.config.distribution.runtime(target)
     val runtime = Runtime(runtimeFile) // TODO: dispose

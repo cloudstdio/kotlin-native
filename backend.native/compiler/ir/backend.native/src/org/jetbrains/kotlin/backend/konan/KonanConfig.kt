@@ -46,7 +46,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
-    private val target = targetManager.target
+    internal val target = targetManager.target
 
     init {
         if (!platformManager.isEnabled(target)) {

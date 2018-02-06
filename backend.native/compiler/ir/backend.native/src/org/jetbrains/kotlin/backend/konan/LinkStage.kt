@@ -28,7 +28,7 @@ typealias ExecutableFile = String
 internal class LinkStage(val context: Context) {
 
     private val config = context.config.configuration
-    private val target = context.config.targetManager.target
+    private val target = context.config.target
     private val platform = context.config.platform
     private val linker = platform.linker
 
