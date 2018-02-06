@@ -17,26 +17,26 @@
 # Zephyr RTOS. 
 # STM32 F4 Discovery
 
-quadruple.zephyr_stm32f4-disco = armv7m-none-eabi
-targetSysRoot.zephyr_stm32f4-disco = target-sysroot-2-wasm
-entrySelector.zephyr_stm32f4-disco = --defsym main=Konan_main
-llvmLtoFlags.zephyr_stm32f4-disco =
-llvmLtoOptFlags.zephyr_stm32f4-disco = -O3 -function-sections
-llvmLtoNooptFlags.zephyr_stm32f4-disco = -O1
-llvmLtoDynamicFlags.zephyr_stm32f4-disco = -relocation-model=pic
+quadruple.zephyr_stm32f4_disco = armv7m-none-eabi
+targetSysRoot.zephyr_stm32f4_disco = target-sysroot-2-wasm
+entrySelector.zephyr_stm32f4_disco = --defsym main=Konan_main
+llvmLtoFlags.zephyr_stm32f4_disco =
+llvmLtoOptFlags.zephyr_stm32f4_disco = -O3 -function-sections
+llvmLtoNooptFlags.zephyr_stm32f4_disco = -O1
+llvmLtoDynamicFlags.zephyr_stm32f4_disco = -relocation-model=pic
 
 boardSpecificClangFlags.zephyr_stm32f4_disco = -mabi=aapcs -mthumb -mcpu=cortex-m4
 
 
 
-targetToolchain.linux-zephyr_stm32f4-disco = gcc-arm-none-eabi-7-2017-q4-major-linux/../gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
-dependencies.linux-zephyr_stm32f4-disco = \
+targetToolchain.linux-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/../gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
+dependencies.linux-zephyr_stm32f4_disco = \
     clang-llvm-5.0.0-linux-x86-64 \
     gcc-arm-none-eabi-7-2017-q4-major-linux \
     target-sysroot-2-wasm
 
-targetToolchain.osx-zephyr_stm32f4-disco = gcc-arm-none-eabi-7-2017-q4-major-mac/../gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
-dependencies.osx-zephyr_stm32f4-disco = \
+targetToolchain.osx-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-mac/../gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi
+dependencies.osx-zephyr_stm32f4_disco = \
     gcc-arm-none-eabi-7-2017-q4-major-mac \
     clang-llvm-5.0.0-darwin-macos \
     target-sysroot-2-wasm
