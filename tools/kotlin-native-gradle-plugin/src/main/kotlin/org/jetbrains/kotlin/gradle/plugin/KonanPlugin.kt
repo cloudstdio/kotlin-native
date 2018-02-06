@@ -76,7 +76,7 @@ internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBu
 
 internal val Project.platformManager: PlatformManager
     get() {
-        return findProperty("platformManager") as PlatformManager ?: PlatformManager(customerDistribution())
+        return findProperty("platformManager") as PlatformManager? ?: PlatformManager(customerDistribution())
     }
 
 internal val Project.konanTargets: List<KonanTarget>
