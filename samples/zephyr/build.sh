@@ -8,7 +8,7 @@ source "$DIR/../konan.sh"
 
 mkdir -p $DIR/build && cd $DIR/build
 
-konanc $DIR/src/main.kt -target zephyr -linkerOpts -L/opt/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major//arm-none-eabi/lib/thumb -linkerOpts -lsupc++ -opt || exit 1
+konanc $DIR/src/main.kt -target zephyr_$BOARD -linkerOpts -L/opt/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major//arm-none-eabi/lib/thumb -linkerOpts -lsupc++ -opt || exit 1
 
 DEP="$HOME/.konan/dependencies"
 export ZEPHYR_BASE=/Users/jetbrains/kotlin-native/zephyr/
